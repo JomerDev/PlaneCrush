@@ -41,17 +41,17 @@ function ent:update(dt)
 	for i, fire in pairs(self.fires) do
 		fire.fire:start()
 		fire.x = self.x + fire.x - fire.sx
-		fire.y = fire.y + self.y - fire.sy-- + calc(self.ang, fire.ax)
+		fire.y = fire.y + self.y - fire.sy
 		fire.sx = self.x
 		fire.sy = self.y
-		fire.fire:moveTo(fire.x,fire.y)
+		fire.fire:moveTo(fire.x,fire.y+calc(self.ang, fire.ax))
 		fire.fire:update(dt)
 	end
 end
 
 function calc(alpha, a)
-	print((a*math.sin((alpha*(180/math.pi))))/math.sin(90))
-	return (a*math.sin((alpha*(180/math.pi))))/math.sin(90)
+	print(math.tan(alpha)*a)
+	return (math.tan(alpha)*a)
 end
 
 function ent:Damage(n)
