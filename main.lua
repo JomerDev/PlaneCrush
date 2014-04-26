@@ -1,9 +1,9 @@
 function love.load()
 	require("entities")
 	require("explosion")
-	ents.Register()
-end
-	--[[ents.Startup()
+	--ents.Register()
+--end
+	ents.Startup()
 	love.graphics.setBackgroundColor( 255, 255, 255)
 	xCloud = 0
 	imageCloud = love.graphics.newImage("textures/cloud.png")
@@ -28,18 +28,19 @@ function love.draw()
 	love.graphics.setColor(255, 255, 255, 255)
 	love.graphics.draw(imageCloud, xCloud - 256, 128, 0, 1, 1, 0, 0)
 
-	
+	drawBGExplosions()
+	ents:drawBG()
 	
 	-- gras
 	love.graphics.setColor(103, 164, 21, 255)
 	love.graphics.rectangle("fill", 0, 300, 800, 300)
-	drawBGExplosions()
-	ents:drawBG()
+	
 	--more gras
-	--love.graphics.setColor(255, 255, 255, 255)
-	--love.graphics.draw(imageGround, (800-1024)/2, 300-64, 0, 1, 1, 0, 0)
+	love.graphics.setColor(255, 255, 255, 255)
+	love.graphics.draw(imageGround, (800-1024)/2, 300-64, 0, 1, 1, 0, 0)
 
 	ents:draw()
+	drawFGExplosions()
 
 	love.graphics.setColor( 25, 25, 25, 255)
 	love.graphics.print("Score: "..score, 16, 16, 0, 1, 1)
@@ -53,7 +54,7 @@ function love.update(dt)
 	if xCloud >= 800 + 128 then
 		xCloud = 0
 	end
-	updateBGExplosions(dt)
+	updateExplosions(dt)
 	ents:update(dt)
 end
 
@@ -105,4 +106,4 @@ function takeScore(n)
 	if score <= 0 then
 		score = 0
 	end
-end]]
+end

@@ -1,6 +1,6 @@
 ents = {}
 ents.objects = {}
-ents.objpath = "texturen"
+ents.objpath = "entities/"
 local register = {}
 local id = 0
 
@@ -96,7 +96,6 @@ function ents.shoot( x, y )
 			if ent.type == "zepp" then
 				local hit = insideBox(x, y, ent.x, ent.y, 512*(ent.size/20), 128*(ent.size/20))
 				if hit then
-					print("Hit!")
 					ent1 = ent
 				end
 			elseif ent.type == "tank" then

@@ -63,7 +63,7 @@ end
 function ent:update(dt)
 	if self.exploding then
 		if self.explosion == 0 then
-			startBGExplosion( self.x , self.y, 1)
+			startExplosion( self.x , self.y, 1, "FG")
 		end
 		self.explosion = self.explosion + dt
 		if self.explosion >= 1.5 then

@@ -33,7 +33,7 @@ function ent:update(dt)
 		self.ang = self.ang + math.pi*0.025*dt
 
 		if self.y >= 300 then
-			startBGExplosion( self.x + 512*self.size2, self.y + 128*self.size2, 1)
+			startExplosion( self.x + 512*self.size2, self.y + 128*self.size2, 1, "BG")
 			self.falling = false
 			ents.Destroy( self.id )
 		end

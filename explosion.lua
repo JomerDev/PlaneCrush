@@ -1,4 +1,6 @@
-local BGexplosions = {}
+local explosions = {}
+explosions.BGExplosions = {}
+explosions.FGExplosions = {}
 id = love.image.newImageData(32, 32)
 for x = 0, 31 do
     for y = 0, 31 do
@@ -21,7 +23,13 @@ exp:setRadialAcceleration(0)
 exp:setLinearAcceleration(0,-90,0,0)
 exp:setEmissionRate(500)
 
-function startBGExplosion(x, y, magn)
+function startExplosion(x, y, magn, ground)
+	local g = nil
+	if tostring(ground) == "BG" then
+		g = true
+	elseif tostring(ground) == "FG" then
+	    g = false
+	end
 	local exp1 = exp:clone()
 	exp1:setTangentialAcceleration(0,-20)
 	exp1:setPosition(x-5, y)
@@ -34,26 +42,47 @@ function startBGExplosion(x, y, magn)
 	exp3:setColors({255,255,0,255},{255,255,0,255},{255,0,0,255},{255,255,0,255},{255,0,0,255},{100,50,50,255})
 	exp2:setTangentialAcceleration(0,20)
 	exp3:setParticleLifetime(1,1.5)
-	table.insert(BGexplosions,{exp1,exp2,exp3, 0, magn, x, y})
+	if g then
+		table.insert(explosions.BGExplosions,{exp1,exp2,exp3, 0, magn, x, y})
+	elseif g == false then
+	    table.insert(explosions.FGExplosions,{exp1,exp2,exp3, 0, magn, x, y})
+	end
 end
 
 function drawBGExplosions()
-	for k, ex in pairs(BGexplosions) do
+	for k, ex in pairs(explosions.BGExplosions) do
 		love.graphics.draw(ex[1],0,0)
 		love.graphics.draw(ex[2],0,0)
 		love.graphics.draw(ex[3],0,0)
 	end
 end
 
-function updateBGExplosions(dt)
-	for k, ex in pairs(BGexplosions) do
+function updateExplosions(dt)
+	for k, ex in pairs(explosions.BGExplosions) do
 		ex[1]:update(dt)
 		ex[2]:update(dt)
 		ex[3]:update(dt)
 		ex[4] = ex[4] + dt
 		if ex[4] >= 4 then
-			table.remove(BGexplosions, k)
+			table.remove(explosions.BGExplosions, k)
 		end
+	end
+	for k, ex in pairs(explosions.FGExplosions) do
+		ex[1]:update(dt)
+		ex[2]:update(dt)
+		ex[3]:update(dt)
+		ex[4] = ex[4] + dt
+		if ex[4] >= 4 then
+			table.remove(explosions.FGExplosions, k)
+		end
+	end
+end
+
+function drawFGExplosions()
+	for k, ex in pairs(explosions.FGExplosions) do
+		love.graphics.draw(ex[1],0,0)
+		love.graphics.draw(ex[2],0,0)
+		love.graphics.draw(ex[3],0,0)
 	end
 end
 
