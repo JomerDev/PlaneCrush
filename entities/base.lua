@@ -42,7 +42,22 @@ function base:load()
 end
 
 function base:spawnFire(x,y)
-	table.insert(base.fires,{fire = base.exFire:clone(), x=x, y=y, sx=0,sy=0, ax=x})
+	if self.type == "zepp" then
+		if register.pics[self.name].boxFire then
+			local num = math.random(1,#register.pics[self.name].boxFire)
+			local string = register.pics[self.name].boxFire[num]
+			local t = {}
+			for i in string.gmatch(string, '[^:]+') do
+				table.insert(t, i)
+				--print(i)
+			end
+			table.insert(base.fires,{fire = base.exFire:clone(), x=t[2]*self.size2, y=t[1]*self.size2, sx=0,sy=0, ax=t[2]*self.size2})
+		else
+		    table.insert(base.fires,{fire = base.exFire:clone(), x=x, y=y, sx=0,sy=0, ax=x})
+		end
+	else
+		table.insert(base.fires,{fire = base.exFire:clone(), x=x, y=y, sx=0,sy=0, ax=x})
+	end
 end
 
 function base:clearFire()

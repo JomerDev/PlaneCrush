@@ -2,9 +2,11 @@ local ent = ents.Derive("base")
 
 function ent:load( x, y )
 	self:setPos( x, y )
-	self.image = love.graphics.newImage("textures/zepp.png")
-	self.birth = love.timer.getTime() + math.random( 0, 128 )
-	self.size = math.random( 4, 6 )
+	local num = math.random(1,16)
+	self.image = love.graphics.newImage("texturen/plane"..num..".png")
+	self.name = "plane"..num
+	self.birth = love.timer.getTime() + math.random( 0, 64 )
+	self.size = math.random( 6, 8 )
 	self.size2 = self.size/20
 	self.ang = 0
 	self.falling = false
@@ -21,8 +23,8 @@ end
 function ent:update(dt)
 	local posy = math.sin(love.timer.getTime() - self.birth)*(self.size*3)
 	local posx = (self.size*9)*dt
-	--self.y = self.fixed_y + posy
-	--self.x = self.x + posx
+	self.y = self.fixed_y + posy
+	self.x = self.x + posx
 
 	if self.x >= 1024 then
 		ents.Destroy( self.id )
@@ -31,7 +33,7 @@ function ent:update(dt)
 
 	if self.falling then
 		self.fixed_y = self.fixed_y + 32*dt
-		self.ang = self.ang + math.pi*0.025*dt
+		self.ang = self.ang + math.pi*0.050*dt
 
 		if self.y >= 300 then
 			startExplosion( self.x + 128*self.size2, self.y + 128*self.size2, 1, "BG")

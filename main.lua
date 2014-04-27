@@ -14,11 +14,10 @@ function love.load()
 	love.mouse.setVisible(false)
 	score = 0
 
-	for I=1, 3 do
-		--ents.Create( "zepp", -math.random(128, 256), 128, true)
+	for I=1, 5 do
+		ents.Create( "zepp", -math.random(100, 300), 128, true)
 	end
-	ents.Create( "zepp", 128,128, 128, true)
-	--ents.Create( "tank", 0, 512, false)
+	ents.Create( "tank", 0, 512, false)
 end
 
 function love.draw()
@@ -51,6 +50,7 @@ function love.draw()
 end
 
 function love.update(dt)
+	--require("lovebird").update()
 	xCloud = xCloud + 32*dt
 	if xCloud >= 800 + 128 then
 		xCloud = 0

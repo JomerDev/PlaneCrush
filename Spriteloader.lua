@@ -16,7 +16,7 @@ function sprite.calculateSprite(path, file)
     else
     	local results = {sprite.calcHitbox(path)}
     	print("[SPRITE]: Succesfully calculated Hitbox for "..file)
-    	return "Sum",unpack(results)
+    	return tostring(name),unpack(results)
 	end
 end
 
@@ -71,6 +71,8 @@ function thread()
 			local file = tostring(string[2])
 			if love.filesystem.exists(path) and tostring(type(file)) == "string" then
 				local t = {sprite.calculateSprite(path,file)}
+				answer:supply("Name")
+				answer:supply(tostring(t[1]))
 				answer:supply("boxShoot")
 				for i,v in pairs(t[2]) do
 					answer:supply(tostring(i))
