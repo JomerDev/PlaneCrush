@@ -15,9 +15,10 @@ function love.load()
 	score = 0
 
 	for I=1, 3 do
-		ents.Create( "zepp", -math.random(128, 256), 128, true)
+		--ents.Create( "zepp", -math.random(128, 256), 128, true)
 	end
-	ents.Create( "tank", 0, 512, false)
+	ents.Create( "zepp", 128,128, 128, true)
+	--ents.Create( "tank", 0, 512, false)
 end
 
 function love.draw()

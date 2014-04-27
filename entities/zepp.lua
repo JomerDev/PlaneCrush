@@ -21,11 +21,12 @@ end
 function ent:update(dt)
 	local posy = math.sin(love.timer.getTime() - self.birth)*(self.size*3)
 	local posx = (self.size*9)*dt
-	self.y = self.fixed_y + posy
-	self.x = self.x + posx
+	--self.y = self.fixed_y + posy
+	--self.x = self.x + posx
 
 	if self.x >= 1024 then
 		ents.Destroy( self.id )
+		takeScore(3)
 	end
 
 	if self.falling then
@@ -33,7 +34,7 @@ function ent:update(dt)
 		self.ang = self.ang + math.pi*0.025*dt
 
 		if self.y >= 300 then
-			startExplosion( self.x + 512*self.size2, self.y + 128*self.size2, 1, "BG")
+			startExplosion( self.x + 128*self.size2, self.y + 128*self.size2, 1, "BG")
 			self.falling = false
 			ents.Destroy( self.id )
 		end
@@ -50,7 +51,6 @@ function ent:update(dt)
 end
 
 function calc(alpha, a)
-	print(math.tan(alpha)*a)
 	return (math.tan(alpha)*a)
 end
 

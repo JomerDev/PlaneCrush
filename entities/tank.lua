@@ -5,11 +5,14 @@ function ent:load(x, y)
 	self.image_barrel = love.graphics.newImage("textures/barrel.png")
 	self.image_tank = love.graphics.newImage("textures/tank.png")
 	self.image_smoke = love.graphics.newImage("textures/smoke.png")
+	self.height = self.image_tank:getHeight()
+	self.width = self.image_tank:getWidth()
 	self.speed = 16
 	self.smokes = {}
 	self.size = 0.25
 	self.barrel_ang = 0
 	self.distance = math.random(100,300)
+
 
 	self.delta = 0
 
@@ -34,19 +37,19 @@ function ent:getBarrelPos()
 end
 
 function ent:draw()
-	if self.exploding then
+	--if self.exploding then
 		--love.graphics.setColor(255,255,255,255*(1-self.explosion))
 		--love.graphics.circle("fill", self.x, self.y, self.explosion*512, 64)
 
-		love.graphics.setColor(255,255,255,255*(1.5-self.explosion))
-		local bx, by = self:getBarrelPos()
-		love.graphics.draw(self.image_barrel, bx, by, self:getBarrelRad(), self.size*0.75, self.size*0.75, 0, 16)
+		--love.graphics.setColor(255,255,255,255*(1.5-self.explosion))
+		--local bx, by = self:getBarrelPos()
+		--love.graphics.draw(self.image_barrel, bx, by, self:getBarrelRad(), self.size*0.75, self.size*0.75, 0, 16)
 
-		love.graphics.setColor(255,255,255,255*(1.5-self.explosion))
-		love.graphics.draw(self.image_tank, self.x, self.y, 0, self.size, self.size, 256, 128)
+		--love.graphics.setColor(255,255,255,255*(1.5-self.explosion))
+		--love.graphics.draw(self.image_tank, self.x, self.y, 0, self.size, self.size, 256, 128)
 
-		return
-	end
+		--return
+	--end
 
 	love.graphics.setColor(255,255,255,255)
 	local bx, by = self:getBarrelPos()
@@ -63,10 +66,11 @@ end
 function ent:update(dt)
 	if self.exploding then
 		if self.explosion == 0 then
-			startExplosion( self.x , self.y, 1, "FG")
+			startExplosion( self.x-(self.width/8)*self.size, self.y+(self.height/2)*self.size, 1, "FG")
+			startExplosion( self.x+(self.width/8)*self.size, self.y+(self.height/2)*self.size, 1, "FG")
 		end
 		self.explosion = self.explosion + dt
-		if self.explosion >= 1.5 then
+		if self.explosion >= 1 then
 			ents.Destroy(self.id)
 		end
 		return

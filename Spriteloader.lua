@@ -1,5 +1,8 @@
 sprite = {}
 sprite.objects = {}
+require("love.filesystem")
+require("love.image")
+require("table")
 
 function sprite.calculateSprite(path, file)
 	local name = string.sub(file, 1, string.len(file)-4)
@@ -11,8 +14,9 @@ function sprite.calculateSprite(path, file)
     	print("[SPRITE]: "..tostring(file).." is already calculated! Please check your files")
     	return "Known"
     else
+    	local results = {sprite.calcHitbox(path)}
     	print("[SPRITE]: Succesfully calculated Hitbox for "..file)
-    	return "Sum",sprite.calcHitbox(path)
+    	return "Sum",unpack(results)
 	end
 end
 
@@ -25,7 +29,7 @@ function sprite.calcHitbox(path)
 		for j=1,string.len(v) do
 			if tostring(string.sub(v,j,j)) == "1" then
 				boxShoot[i][j] = true
-				table.insert(boxFire, {x=i,y=j,state=true})
+				table.insert(boxFire, tostring(i)..":"..tostring(j).. ":" ..tostring(true))
 			else
 			    boxShoot[i][j] = false
 			end
@@ -52,29 +56,37 @@ function loadSprite(s)
 end
 
 function thread()
-	local request = love.thread.newChannel("request")
-	local answer = love.thread.newChannel("answer")
+	local request = love.thread.getChannel("request")
+	local answer = love.thread.getChannel("answer")
 
 	while true do
-		local string = {request:pop()}
-		local path = tostring(string[1])
-		local file = tostring(string[2])
-		if love.filesystem.exists(path) and file and tostring(type(file)) == "string" then
-			local t = {sprite.calculateSprite(path,file)}
-			answer:supply("boxShoot")
-			for i,v in pairs(t[1]) do
-				answer:supply(tostring(i))
-				answer:supply(v)
-			end
-			answer:supply("boxFire")
-			answer:supply(t[2])
-			answer:supply("width")
-			answer:supply(t[3].w)
-			answer:supply("height")
-			answer:supply(t[3].h)
-			answer:supply("End")
+		local string = request:demand()
+		if tostring(string) == "nil" then
+
+		elseif tostring(string) == "END" then
+			print("[SPRITE]: Succesfully calculated all Hitboxes")
+			return
 		else
-			answer:supply("No File")
+			local path = tostring(string[1])
+			local file = tostring(string[2])
+			if love.filesystem.exists(path) and tostring(type(file)) == "string" then
+				local t = {sprite.calculateSprite(path,file)}
+				answer:supply("boxShoot")
+				for i,v in pairs(t[2]) do
+					answer:supply(tostring(i))
+					answer:supply(v)
+				end
+				answer:supply("boxFire")
+				answer:supply(t[3])
+				answer:supply("width")
+				answer:supply(t[4].w)
+				answer:supply("height")
+				answer:supply(t[4].h)
+				answer:supply("End")
+				print("[SPRITE]: Succesfully transfered calculations to main thread")
+			else
+				answer:supply("No File")
+			end
 		end
 	end
 end

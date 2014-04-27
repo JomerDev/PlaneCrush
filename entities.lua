@@ -2,13 +2,27 @@ ents = {}
 ents.objects = {}
 ents.objpath = "entities/"
 local register = {}
+register.pics = {}
 local id = 0
+local state = false
+local state2 = "next"
+local state3 = nil
+local info = 0
+local number = 1
+local numb = 0
 
 function ents.Startup()
 	--register["box"] = love.filesystem.load( ents.objpath .. "box.lua" )
 	register["zepp"] = love.filesystem.load( ents.objpath .. "zepp.lua" )
 	register["tank"] = love.filesystem.load( ents.objpath .. "tank.lua" )
 	register["bullet"] = love.filesystem.load( ents.objpath .. "bullet.lua" )
+
+	thread = love.thread.newThread("Spriteloader.lua")
+	request = love.thread.getChannel("request")
+	answer = love.thread.getChannel("answer")
+
+	thread:start()
+	files = love.filesystem.getDirectoryItems("texturen")
 end
 
 function ents.Derive(name)
@@ -32,6 +46,7 @@ function ents.Create( name, x, y, BG)
 
 	if register[name] then
 		id = id + 1
+		print(name)
 		local ent =  register[name]()
 		ent:load()
 		ent.type = name
@@ -62,10 +77,105 @@ function ents.DestroyAll()
 end
 
 function ents:update(dt)
-	for i, ent in pairs(ents.objects) do
-		if ent.update then
-			ent:update(dt)
+	if state == true then
+		for i, ent in pairs(ents.objects) do
+			if ent.update then
+				ent:update(dt)
+			end
 		end
+	else
+		if state2 == "next" then
+			if number > #files then
+				state = true
+				request:push("END")
+				printMap = function(file, l)   -- a function for printing the 'binary' sprite
+							f = love.filesystem.newFile(string.sub(file,1,string.len(file)-3).."txt")
+               			    f:open("w")
+               			   	print(string.sub(file,1,string.len(file)-3).."txt")
+               			    f:write("boxShoot\r\n")
+                           	for i,v in ipairs(register.pics[l].boxShoot) do
+                           		for j,x in pairs(v) do
+                           			if x then
+                           				f:write("1")
+                           			else
+                           			    f:write(" ")
+                           			end
+                           		end
+                                f:write("\r\n")
+                           	end
+                           	f:write("boxFire")
+                           	for i,v in ipairs(register.pics[l].boxFire) do
+                                f:write(v.."\r\n")
+                           	end
+                           	f:close()
+                        end
+                print(#files)
+                for i,v in pairs(files) do
+                	--printMap(v, v)
+                end
+				return
+			end
+			local tab = {"texturen/"..tostring(files[number]),tostring(files[number])}
+	    	request:push(tab)
+	    	state2 = "recieve"
+	    	register.pics[tostring(files[number])] = {}
+	    	return
+	    elseif state2 == "recieve" then
+	        local v = answer:pop()
+	        if tostring(v) == "nil" then
+	            return
+	        end
+	        if tostring(v) == "No File" then
+	        	print("ERROR: NO File found")
+	        	debug.debug ()
+	        end
+	        if tostring(v) == "boxShoot" then
+	        	register.pics[tostring(files[number])].boxShoot = {}
+	        	state3 = "number"
+	        	return
+	        end
+	        if tostring(v) == "boxFire" then
+	        	state3 = "boxFire"
+	        	register.pics[tostring(files[number])].boxFire = {}
+	        	return
+	        end
+	        if tostring(v) == "width" then
+	        	state3 = "width"
+	        	return
+	        end
+	         if tostring(v) == "height" then
+	        	state3 = "height"
+	        	return
+	        end
+	         if tostring(v) == "End" then
+	        	state3 = "End"
+	        	state2 = "next"
+	        	number = number + 1
+	        	return
+	        end
+	        if state3 == "number" then
+	        	info = tonumber(v)
+	        	state3 = "table"
+	        	return
+	        end
+	        if state3 == "table" then
+	        	register.pics[tostring(files[number])].boxShoot[info] = v
+	        	state3 = "number"
+	        	return
+	        end
+	        if state3 == "boxFire" then
+	        	register.pics[tostring(files[number])].boxFire = v
+	        	return
+	        end
+	        if state3 == "width" then
+	        	register.pics[tostring(files[number])].width = tonumber(v)
+	        	return
+	        end
+	        if state3 == "height" then
+	        	register.pics[tostring(files[number])].height = tonumber(v)
+	        	return
+	        end
+	    end
 	end
 end
 
@@ -93,12 +203,20 @@ function ents.shoot( x, y )
 	local ent1, ent2
 	for i, ent in pairs(ents.objects) do
 		if ent.Die then
-			if ent.type == "zepp" then
+			if tostring(ent.type) == "zepp" then
 				local hit = insideBox(x, y, ent.x, ent.y, 512*(ent.size/20), 128*(ent.size/20))
 				if hit then
 					ent1 = ent
+					if register.pics["plane16.png"] and register.pics["plane16.png"].boxShoot then
+						print(math.ceil((x-ent.x)*ent.size2).." : "..math.ceil((y-ent.y)*ent.size2))
+						print(ent.x.." : "..love.mouse.getX().." : "..ent.y.." : "..love.mouse.getY())
+						print(register.pics["plane16.png"].boxShoot[math.ceil((x-ent.x))][math.ceil((y-ent.y))])
+						if register.pics["plane16.png"].boxShoot[math.ceil((x-ent.x))][math.ceil((y-ent.y))] == true then
+							print("Test1")
+						end
+					end
 				end
-			elseif ent.type == "tank" then
+			elseif tostring(ent.type) == "tank" then
 				local hit = insideBox(x,y, ent.x-128*ent.size, ent.y, 256*ent.size, 128*ent.size)
 				if hit then
 					ent2 = ent
@@ -107,7 +225,7 @@ function ents.shoot( x, y )
 		end
 	end
 	if ent1 then
-		ent1:Damage(2)
+		--ent1:Damage(2)
 	end
 	if ent2 then
 		ent2:Damage(2)

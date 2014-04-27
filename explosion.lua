@@ -29,6 +29,7 @@ function startExplosion(x, y, magn, ground)
 		g = true
 	elseif tostring(ground) == "FG" then
 	    g = false
+	    exp:setSpread(3)
 	end
 	local exp1 = exp:clone()
 	exp1:setTangentialAcceleration(0,-20)
@@ -42,6 +43,9 @@ function startExplosion(x, y, magn, ground)
 	exp3:setColors({255,255,0,255},{255,255,0,255},{255,0,0,255},{255,255,0,255},{255,0,0,255},{100,50,50,255})
 	exp2:setTangentialAcceleration(0,20)
 	exp3:setParticleLifetime(1,1.5)
+	if not g then
+		exp:setSpread(1)
+	end
 	if g then
 		table.insert(explosions.BGExplosions,{exp1,exp2,exp3, 0, magn, x, y})
 	elseif g == false then
