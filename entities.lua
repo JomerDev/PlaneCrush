@@ -26,8 +26,12 @@ function ents.Startup()
 	files = love.filesystem.getDirectoryItems("texturen")
 end
 
-function ents.Derive(name)
-	return love.filesystem.load( ents.objpath .. name .. ".lua" )()
+function ents.Derive(name, path)
+	if path then
+		return love.filesystem.load( ents.objpath..path.. name .. ".lua" )()
+	else
+		return love.filesystem.load( ents.objpath .. name .. ".lua" )()
+	end
 end
 
 

@@ -18,6 +18,9 @@ function love.load()
 		ents.Create( "zepp", -math.random(100, 300), 128, true)
 	end
 	ents.Create( "tank", 0, 512, false)
+
+	options = {}
+	options.dieHeight = 300
 end
 
 function love.draw()

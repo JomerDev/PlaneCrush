@@ -3,7 +3,7 @@ local ent = ents.Derive("base")
 function ent:load(x, y)
 	self:setPos(x, y)
 	self.image_barrel = love.graphics.newImage("textures/barrel.png")
-	self.image_tank = love.graphics.newImage("textures/tank.png")
+	self.image_tank = love.graphics.newImage("texturen/tank1_withoutEverything.png")
 	self.image_smoke = love.graphics.newImage("textures/smoke.png")
 	self.height = self.image_tank:getHeight()
 	self.width = self.image_tank:getWidth()
@@ -56,7 +56,7 @@ function ent:draw()
 	love.graphics.draw(self.image_barrel, bx, by, self:getBarrelRad(), self.size*0.75, self.size*0.75, 0, 16)
 
 	love.graphics.setColor(255,255,255,255)
-	love.graphics.draw(self.image_tank, self.x, self.y, 0, self.size, self.size, 256, 128)
+	love.graphics.draw(self.image_tank, self.x, self.y, 0, -self.size, self.size, 256, 128)
 
 	for k, fire in pairs(self.fires) do
 		love.graphics.draw(fire.fire, 0, 0,0)
